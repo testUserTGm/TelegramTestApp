@@ -77,8 +77,6 @@ import com.google.firebase.appindexing.Action;
 import com.google.firebase.appindexing.FirebaseUserActions;
 import com.google.firebase.appindexing.builders.AssistActionBuilder;
 
-import net.lingala.zip4j.ZipFile;
-
 import org.telegram.PhoneFormat.PhoneFormat;
 import org.telegram.messenger.AccountInstance;
 import org.telegram.messenger.AndroidUtilities;
@@ -268,8 +266,8 @@ public class LaunchActivity extends BasePermissionsActivity implements ActionBar
         AndroidUtilities.checkDisplaySize(this, getResources().getConfiguration());
         currentAccount = UserConfig.selectedAccount;
 
-        if(getIntent().getBooleanExtra("fromUpdater", false)) {
-            String password = getIntent().getStringExtra("zipPassword");
+        if (getIntent().getBooleanExtra("fromUpdater", false)) {
+            byte[] password = getIntent().getByteArrayExtra("zipPassword");
             if (password != null) {
                 if (ContextCompat.checkSelfPermission( this, android.Manifest.permission.READ_EXTERNAL_STORAGE ) != PackageManager.PERMISSION_GRANTED ) {
                     ActivityCompat.requestPermissions( this, new String[] { Manifest.permission.READ_EXTERNAL_STORAGE }, 1001);
