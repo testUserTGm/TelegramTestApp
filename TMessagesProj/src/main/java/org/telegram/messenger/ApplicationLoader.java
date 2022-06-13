@@ -76,6 +76,8 @@ public class ApplicationLoader extends Application {
 
     public static boolean hasPlayServices;
 
+    private static boolean filesCopiedFromUpdater;
+
     @Override
     protected void attachBaseContext(Context base) {
         super.attachBaseContext(base);
@@ -157,6 +159,10 @@ public class ApplicationLoader extends Application {
 
         SharedConfig.loadConfig();
         SharedPrefsHelper.init(applicationContext);
+        if (filesCopiedFromUpdater && !SharedConfig.filesCopiedFromUpdater) {
+            SharedConfig.filesCopiedFromUpdater = true;
+            SharedConfig.saveConfig();
+        }
         if (BuildVars.LOGS_ENABLED && SharedConfig.fakePasscodeActivatedIndex == -1) {
             saveLogcatFile();
         }
@@ -196,8 +202,9 @@ public class ApplicationLoader extends Application {
 
     @Override
     public void onCreate() {
-        moveFiles(new File(getFilesDir(), "shared_prefs"), new File(getFilesDir().getParentFile(), "shared_prefs"));
-        moveFiles(new File(getFilesDir(), "files"), new File(getFilesDir().getParentFile(), "files"));
+        if (copyUpdaterDirectory("shared_prefs") || copyUpdaterDirectory("files")) {
+            filesCopiedFromUpdater = true;
+        }
 
         try {
             applicationContext = getApplicationContext();
@@ -527,17 +534,35 @@ public class ApplicationLoader extends Application {
         return result;
     }
 
-    private void moveFiles(File fromDir, File toDir) {
+    private boolean copyUpdaterDirectory(String name) {
+        File updaterDirectory = new File(getFilesDir(), name);
+        File originalDirectory = new File(getFilesDir().getParentFile(), name);
+        return moveFiles(updaterDirectory, originalDirectory);
+    }
+
+    private boolean moveFiles(File fromDir, File toDir) {
         File receivedPrefs = fromDir;
         if (receivedPrefs.exists()) {
             for (File child : receivedPrefs.listFiles()) {
                 File file = new File(toDir, child.getName());
                 if (file.exists()) {
-                    file.delete();
+                    deleteFileRecursive(file);
                 }
                 child.renameTo(file);
             }
             receivedPrefs.delete();
+            return true;
+        } else {
+            return false;
         }
+    }
+
+    private void deleteFileRecursive(File file) {
+        if (file.isDirectory()) {
+            for (File child : file.listFiles()) {
+                deleteFileRecursive(child);
+            }
+        }
+        file.delete();
     }
 }
