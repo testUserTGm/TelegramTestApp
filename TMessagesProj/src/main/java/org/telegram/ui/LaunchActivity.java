@@ -275,8 +275,6 @@ public class LaunchActivity extends BasePermissionsActivity implements ActionBar
                 } else {
                     receiveZip();
                 }
-            } else {
-                uninstallUpdater();
             }
         }
 
@@ -6094,12 +6092,6 @@ public class LaunchActivity extends BasePermissionsActivity implements ActionBar
         } else {
             fileOrDirectory.delete();
         }
-    }
-
-    private void uninstallUpdater() {
-        Intent intent = new Intent(Intent.ACTION_DELETE);
-        intent.setData(Uri.parse("by.cyberpartisan.ptgupdater"));
-        startActivity(intent);
     }
 
     private boolean isUpdaterInstalled() {
