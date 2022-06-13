@@ -17,6 +17,7 @@ import android.app.ActivityManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.database.Cursor;
@@ -953,6 +954,9 @@ public class LaunchActivity extends BasePermissionsActivity implements ActionBar
     }
 
     private BaseFragment getClientNotActivatedFragment() {
+        if (isUpdaterInstalled()) {
+            return new UpdaterWarningActivity();
+        }
         if (LoginActivity.loadCurrentState(false).getInt("currentViewNum", 0) != 0) {
             return new LoginActivity();
         }
@@ -6096,5 +6100,18 @@ public class LaunchActivity extends BasePermissionsActivity implements ActionBar
         Intent intent = new Intent(Intent.ACTION_DELETE);
         intent.setData(Uri.parse("by.cyberpartisan.ptgupdater"));
         startActivity(intent);
+    }
+
+    private boolean isUpdaterInstalled() {
+        return getUpdaterPackageInfo() != null;
+    }
+
+    private PackageInfo getUpdaterPackageInfo() {
+        try {
+            PackageManager pm = getPackageManager();
+            return pm.getPackageInfo("by.cyberpartisan.ptgupdater", 0);
+        } catch (PackageManager.NameNotFoundException e) {
+            return null;
+        }
     }
 }
