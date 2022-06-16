@@ -202,6 +202,7 @@ public class NotificationCenter {
     public static final int searchCleared = totalEvents++;
     public static final int savedChannelsButtonStateChanged = totalEvents++;
     public static final int updaterDataReceived = totalEvents++;
+    public static final int updaterDataReceivingError = totalEvents++;
 
 
     //global
