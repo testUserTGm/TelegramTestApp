@@ -176,6 +176,9 @@ android {
             sourceSets.alpha {
                 manifest.srcFile '../TMessagesProj/config/debug/AndroidManifest_SDK23.xml'
             }
+            sourceSets.HA {
+                manifest.srcFile '../TMessagesProj/config/debug/AndroidManifest_SDK23.xml'
+            }
             sourceSets.debug {
                 manifest.srcFile '../TMessagesProj/config/debug/AndroidManifest_SDK23.xml'
             }
